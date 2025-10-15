@@ -321,7 +321,7 @@
         }
 
         .available-players {
-            max-height: 200px;
+            max-height: 80px;
             overflow-y: auto;
             border: 1px solid #ddd;
             border-radius: 8px;
@@ -1195,7 +1195,6 @@ weekScheduleElement.innerHTML = weeksData[weekNum-1].matches.map((match, index) 
                                     const isGK = team.gk === player;
                                     return `
                                     <div class="team-player-item ${isGK ? 'gk-player' : ''}">
-                                        <span>${player} ${isGK ? '<span class="gk-badge">GK</span>' : ''}</span>
                                         <div>
                                             ${!isGK ? `<button class="btn-small btn-gk" onclick="setAsGK(${weekNum}, '${team.color}', '${player}')">GK</button>` : ''}
                                             <span class="remove-player" onclick="removePlayerFromTeam(${weekNum}, '${team.color}', '${player}')">✕</span>
@@ -1803,4 +1802,5 @@ function updateTeamResults(week) {
             }
     </script>
 </body>
+
 </html>
