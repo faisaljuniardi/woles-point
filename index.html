@@ -474,6 +474,20 @@
             border: 2px dashed #3498db;
         }
 
+        /* Footer Styles */
+        .site-footer {
+            background: linear-gradient(135deg, #2c3e50, #1a252f);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: auto;
+        }
+        
+        .footer-content p {
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+        
         @media (min-width: 768px) {
             .schedule-and-standings {
                 grid-template-columns: 2fr 3fr;
@@ -854,6 +868,12 @@
                 <button class="save-btn" onclick="saveWeekData(4)">Simpan Data Minggu 4</button>
             </div>
         </div>
+        <footer class="site-footer">
+            <div class="footer-content">
+                <p>&copy; 2025 Fjun21 </p>
+                <p>Woles FC - Player Of The Month</p>
+            </div>
+        </footer>
     </div>
 
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
@@ -1803,3 +1823,4 @@ function updateTeamResults(week) {
     </script>
 </body>
 </html>
+
