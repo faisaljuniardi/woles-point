@@ -540,28 +540,10 @@
         <div id="dashboard" class="tab-content active">
             <div style="text-align: right; margin-bottom: 10px;">
                 <button onclick="downloadRankingTable()">Unduh Klasemen (JPG)</button>
-                <button class="btn-excel" onclick="exportToExcel()">Export to Excel</button>
+                <!-- <button class="btn-excel" onclick="exportToExcel()">Export to Excel</button> -->
             </div>
             <div id="ranking-combined-container" style="padding: 10px;">
-                <h2>Klasemen Player Of The Month</h2>
-                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-                        <label for="period-month" style="font-weight: bold;">Periode:</label>
-                        <select id="period-month" onchange="updatePeriod()" style="padding: 5px 10px; border: 1px solid #ddd; border-radius: 4px;">
-                            <option value="Januari">Januari</option>
-                            <option value="Februari">Februari</option>
-                            <option value="Maret">Maret</option>
-                            <option value="April">April</option>
-                            <option value="Mei">Mei</option>
-                            <option value="Juni">Juni</option>
-                            <option value="Juli">Juli</option>
-                            <option value="Agustus">Agustus</option>
-                            <option value="September">September</option>
-                            <option value="Oktober" selected>Oktober</option>
-                            <option value="November">November</option>
-                            <option value="Desember">Desember</option>
-                        </select>
-                        <input type="number" id="period-year" value="2024" min="2024" max="2030" onchange="updatePeriod()" style="padding: 5px 10px; border: 1px solid #ddd; border-radius: 4px; width: 80px;">
-                    </div>
+                <h2>Klasemen Player Of The Month - Oktober</h2>
                 <div style="overflow-x: auto;">
                     <table id="ranking-table">
                         <thead>
