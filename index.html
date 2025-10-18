@@ -89,24 +89,24 @@
         }
 
         .score-input input {
-    width: 60px;
-    text-align: center;
-    font-weight: bold;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 5px;
-}
+            width: 60px;
+            text-align: center;
+            font-weight: bold;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px;
+        }
 
-.score-input input::placeholder {
-    color: #999;
-    font-style: italic;
-}
+        .score-input input::placeholder {
+            color: #999;
+            font-style: italic;
+        }
 
-.score-input input:focus {
-    border-color: #1abc9c;
-    outline: none;
-    box-shadow: 0 0 5px rgba(26, 188, 156, 0.3);
-}
+        .score-input input:focus {
+            border-color: #1abc9c;
+            outline: none;
+            box-shadow: 0 0 5px rgba(26, 188, 156, 0.3);
+        }
 
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -250,6 +250,14 @@
 
         .btn-export:hover {
             background-color: #2980b9;
+        }
+
+        .btn-excel {
+            background-color: #27ae60;
+        }
+
+        .btn-excel:hover {
+            background-color: #219955;
         }
 
         .ranking-badge {
@@ -531,6 +539,7 @@
         <div id="dashboard" class="tab-content active">
             <div style="text-align: right; margin-bottom: 10px;">
                 <button onclick="downloadRankingTable()">Unduh Klasemen (JPG)</button>
+                <button class="btn-excel" onclick="exportToExcel()">Export to Excel</button>
             </div>
             <div id="ranking-combined-container" style="padding: 10px;">
                 <h2>Klasemen Player Of The Month</h2>
@@ -877,6 +886,7 @@
     </div>
 
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <script>
         // Data awal
@@ -1807,20 +1817,76 @@ function updateTeamResults(week) {
             }
         }
 
-            // Fungsi untuk memperbarui periode
-            function updatePeriod() {
-                const month = document.getElementById('period-month').value;
-                const year = document.getElementById('period-year').value;
-                localStorage.setItem('rankingPeriod', JSON.stringify({ month, year }));
-            }
+        // Fungsi untuk memperbarui periode
+        function updatePeriod() {
+            const month = document.getElementById('period-month').value;
+            const year = document.getElementById('period-year').value;
+            localStorage.setItem('rankingPeriod', JSON.stringify({ month, year }));
+        }
 
-            // Fungsi untuk memuat periode yang disimpan
-            function loadPeriod() {
-                const savedPeriod = JSON.parse(localStorage.getItem('rankingPeriod')) || { month: 'Oktober', year: '2024' };
-                document.getElementById('period-month').value = savedPeriod.month;
-                document.getElementById('period-year').value = savedPeriod.year;
-            }
+        // Fungsi untuk memuat periode yang disimpan
+        function loadPeriod() {
+            const savedPeriod = JSON.parse(localStorage.getItem('rankingPeriod')) || { month: 'Oktober', year: '2024' };
+            document.getElementById('period-month').value = savedPeriod.month;
+            document.getElementById('period-year').value = savedPeriod.year;
+        }
+
+        // FUNGSI BARU: Export to Excel
+        function exportToExcel() {
+            const month = document.getElementById('period-month').value;
+            const year = document.getElementById('period-year').value;
+            
+            // Siapkan data untuk Excel
+            const data = [];
+            
+            // Header
+            data.push(['Klasemen Player Of The Month']);
+            data.push([`Periode: ${month} ${year}`]);
+            data.push([]);
+            data.push(['Peringkat', 'Nama Pemain', 'Total Poin', 'Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4']);
+            
+            // Ambil data dari tabel
+            const table = document.getElementById('ranking-table');
+            const rows = table.querySelectorAll('tbody tr');
+            
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                const rowData = [];
+                
+                // Skip badge peringkat, ambil teksnya saja
+                const rankText = cells[0].textContent.trim();
+                rowData.push(rankText);
+                
+                // Tambahkan data sel lainnya
+                for (let i = 1; i < cells.length; i++) {
+                    rowData.push(cells[i].textContent.trim());
+                }
+                
+                data.push(rowData);
+            });
+            
+            // Buat worksheet
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            
+            // Atur lebar kolom
+            const colWidths = [
+                { wch: 10 }, // Peringkat
+                { wch: 25 }, // Nama Pemain
+                { wch: 12 }, // Total Poin
+                { wch: 10 }, // Minggu 1
+                { wch: 10 }, // Minggu 2
+                { wch: 10 }, // Minggu 3
+                { wch: 10 }  // Minggu 4
+            ];
+            ws['!cols'] = colWidths;
+            
+            // Buat workbook dan tambahkan worksheet
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Klasemen');
+            
+            // Export ke file Excel
+            XLSX.writeFile(wb, `Klasemen_POTM_${month}_${year}.xlsx`);
+        }
     </script>
 </body>
 </html>
-
