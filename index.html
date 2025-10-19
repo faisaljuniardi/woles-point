@@ -1582,7 +1582,35 @@
             }));
 
             // Urutkan berdasarkan total poin
-            rankingArray.sort((a, b) => b.total - a.total);
+            // Urutkan dengan tie-breaker berdasarkan akumulasi
+rankingArray.sort((a, b) => {
+    // 1. Bandingkan total poin (descending)
+    if (b.total !== a.total) {
+        return b.total - a.total;
+    }
+    
+    // 2. Jika total sama, bandingkan akumulasi minggu 1-3 (total tanpa minggu 4)
+    const totalWeek1to3_A = a.weeks[0] + a.weeks[1] + a.weeks[2];
+    const totalWeek1to3_B = b.weeks[0] + b.weeks[1] + b.weeks[2];
+    if (totalWeek1to3_B !== totalWeek1to3_A) {
+        return totalWeek1to3_B - totalWeek1to3_A;
+    }
+    
+    // 3. Jika masih sama, bandingkan akumulasi minggu 1-2
+    const totalWeek1to2_A = a.weeks[0] + a.weeks[1];
+    const totalWeek1to2_B = b.weeks[0] + b.weeks[1];
+    if (totalWeek1to2_B !== totalWeek1to2_A) {
+        return totalWeek1to2_B - totalWeek1to2_A;
+    }
+    
+    // 4. Jika masih sama, bandingkan poin minggu 1
+    if (b.weeks[0] !== a.weeks[0]) {
+        return b.weeks[0] - a.weeks[0];
+    }
+    
+    // 5. Jika semua sama, bandingkan berdasarkan abjad (ascending)
+    return a.name.localeCompare(b.name);
+});
 
             console.log('Ranking array:', rankingArray);
 
