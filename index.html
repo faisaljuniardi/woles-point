@@ -11,7 +11,6 @@
             --kuning: #ffde59;
             --hijau: #4caf50;
             --biru: #2196f3;
-            --ungu: #9b59b6;
             --background: #f5f5f5;
             --card: #ffffff;
             --text: #333333;
@@ -536,15 +535,15 @@
             <div class="tab" onclick="switchTab('week2')">Minggu 2</div>
             <div class="tab" onclick="switchTab('week3')">Minggu 3</div>
             <div class="tab" onclick="switchTab('week4')">Minggu 4</div>
-            <div class="tab" onclick="switchTab('week5')">Minggu 5</div>
         </div>
 
         <div id="dashboard" class="tab-content active">
             <div style="text-align: right; margin-bottom: 10px;">
                 <button onclick="downloadRankingTable()">Unduh Klasemen (JPG)</button>
+                <!-- <button class="btn-excel" onclick="exportToExcel()">Export to Excel</button> -->
             </div>
             <div id="ranking-combined-container" style="padding: 10px;">
-                <h2>Klasemen Player Of The Month</h2>
+                <h2>Klasemen Player Of The Month - Oktober</h2>
                 <div style="overflow-x: auto;">
                     <table id="ranking-table">
                         <thead>
@@ -556,7 +555,6 @@
                                 <th>Minggu 2</th>
                                 <th>Minggu 3</th>
                                 <th>Minggu 4</th>
-                                <th>Minggu 5</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -595,7 +593,6 @@
             </div>
         </div>
 
-        <!-- WEEK 1 -->
         <div id="week1" class="tab-content">
             <h2>Data Minggu 1</h2>
             <div class="form-group">
@@ -618,6 +615,7 @@
                 </div>
             </div>
 
+            <!-- Container untuk export tim -->
             <div class="export-teams-container">
                 <h3>Export Susunan Pemain Tim</h3>
                 <p>Export susunan pemain untuk masing-masing tim dalam format JPG</p>
@@ -662,7 +660,6 @@
             </div>
         </div>
 
-        <!-- WEEK 2 -->
         <div id="week2" class="tab-content">
             <h2>Data Minggu 2</h2>
             <div class="form-group">
@@ -685,6 +682,7 @@
                 </div>
             </div>
 
+            <!-- Container untuk export tim -->
             <div class="export-teams-container">
                 <h3>Export Susunan Pemain Tim</h3>
                 <p>Export susunan pemain untuk masing-masing tim dalam format JPG</p>
@@ -729,7 +727,6 @@
             </div>
         </div>
 
-        <!-- WEEK 3 -->
         <div id="week3" class="tab-content">
             <h2>Data Minggu 3</h2>
             <div class="form-group">
@@ -752,6 +749,7 @@
                 </div>
             </div>
 
+            <!-- Container untuk export tim -->
             <div class="export-teams-container">
                 <h3>Export Susunan Pemain Tim</h3>
                 <p>Export susunan pemain untuk masing-masing tim dalam format JPG</p>
@@ -796,7 +794,6 @@
             </div>
         </div>
 
-        <!-- WEEK 4 -->
         <div id="week4" class="tab-content">
             <h2>Data Minggu 4</h2>
             <div class="form-group">
@@ -819,6 +816,7 @@
                 </div>
             </div>
 
+            <!-- Container untuk export tim -->
             <div class="export-teams-container">
                 <h3>Export Susunan Pemain Tim</h3>
                 <p>Export susunan pemain untuk masing-masing tim dalam format JPG</p>
@@ -862,74 +860,6 @@
                 <button class="save-btn" onclick="saveWeekData(4)">Simpan Data Minggu 4</button>
             </div>
         </div>
-
-        <!-- WEEK 5 -->
-        <div id="week5" class="tab-content">
-            <h2>Data Minggu 5</h2>
-            <div class="form-group">
-                <label for="week5-date">Tanggal:</label>
-                <input type="text" id="week5-date" placeholder="Tanggal">
-            </div>
-
-            <div style="text-align: right; margin-bottom: 10px;">
-                <button onclick="downloadCombined(5)">Unduh Jadwal & Klasemen Tim (JPG)</button>
-            </div>
-
-            <div id="week5-combined" class="schedule-and-standings">
-                <div>
-                    <h3>Jadwal Pertandingan</h3>
-                    <div id="week5-schedule"></div>
-                </div>
-                <div>
-                    <h3>Klasemen Tim</h3>
-                    <table id="week5-standings"></table>
-                </div>
-            </div>
-
-            <div class="export-teams-container">
-                <h3>Export Susunan Pemain Tim</h3>
-                <p>Export susunan pemain untuk masing-masing tim dalam format JPG</p>
-                <div class="team-export-container">
-                    <button class="btn-export" onclick="exportAllTeams(5)">Export Semua Tim (4 Gambar)</button>
-                    <button class="btn-export" onclick="exportTeam(5, 'merah')">Export Tim Merah</button>
-                    <button class="btn-export" onclick="exportTeam(5, 'kuning')">Export Tim Kuning</button>
-                    <button class="btn-export" onclick="exportTeam(5, 'hijau')">Export Tim Hijau</button>
-                    <button class="btn-export" onclick="exportTeam(5, 'biru')">Export Tim Biru</button>
-                </div>
-            </div>
-
-            <h3>Susun 4 Tim</h3>
-            <div id="week5-teams">
-                <!-- Data akan diisi oleh JavaScript -->
-            </div>
-
-            <div class="cancel-penalty-container">
-                <h3>Pemain Cancel di Hari H</h3>
-                <p style="color: var(--merah); margin-bottom: 10px; font-weight: bold;">Pemain yang cancel di hari H akan dikurangi 5 poin.</p>
-
-                <div class="form-group">
-                    <label>Tambah Pemain:</label>
-                    <div class="search-box">
-                        <span class="search-icon">🔍</span>
-                        <input type="text" placeholder="Cari pemain..." onkeyup="filterCancelPlayers(5, this.value)">
-                    </div>
-                    <div class="available-players" id="available-cancel-players-5">
-                        <!-- Data akan diisi oleh JavaScript -->
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Daftar Pemain:</label>
-                    <div class="team-players-list" id="canceled-players-5">
-                        <!-- Data akan diisi oleh JavaScript -->
-                    </div>
-                </div>
-            </div>
-            <div class="save-button-container">
-                <button class="save-btn" onclick="saveWeekData(5)">Simpan Data Minggu 5</button>
-            </div>
-        </div>
-
         <footer class="site-footer">
             <div class="footer-content">
                 <p>&copy; 2025 Fjun21 </p>
@@ -943,12 +873,11 @@
 
     <script>
         // Konfigurasi - GANTI URL INI DENGAN URL WEB APP ANDA
-        const APPSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxA1uFLcXMbeV6dNsy5QhUJ6iXz8MkcY1OTQln_vCFdFNlb9jJ5dnfCAbfzU1PG2871/exec';
+        const APPSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsjc9LXbHpC_YipfuT2FLx_-a_nQdlpVRprWGjtY15KuDdnFArLBBzL6Bad71kCs3L/exec';
 
-        // Data awal - DIPERBAIKI: leaderboard dideklarasikan
+        // Data awal
         let players = [];
-        let weeksData = [{}, {}, {}, {}, {}]; // 5 minggu
-        let leaderboard = []; // ✅ VARIABEL INI YANG DULUNYA MISSING
+        let weeksData = [{}, {}, {}, {}];
 
         const teamColors = ['merah', 'kuning', 'hijau', 'biru'];
         const teamNames = {
@@ -981,22 +910,25 @@
             }
         }
 
+        // MODIFIKASI: Panggil addDebugButtons saat load
         document.addEventListener('DOMContentLoaded', async function() {
             await loadAllData();
             renderPlayers();
             initializeWeeks();
             updateRanking();
+            addDebugButtons(); // Tambahkan ini
 
             const today = new Date();
             const dateString = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth()+1).toString().padStart(2, '0')}/${today.getFullYear()}`;
 
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < 4; i++) {
                 if (!weeksData[i].date) {
                     document.getElementById(`week${i+1}-date`).value = dateString;
                 }
             }
         });
 
+        // MODIFIKASI: Update fungsi loadAllData untuk include leaderboard
         async function loadAllData() {
             showLoading();
             
@@ -1009,10 +941,10 @@
                         result.weeksData[1] || { date: '', teams: [], matches: [], cancelOnDay: [] },
                         result.weeksData[2] || { date: '', teams: [], matches: [], cancelOnDay: [] },
                         result.weeksData[3] || { date: '', teams: [], matches: [], cancelOnDay: [] },
-                        result.weeksData[4] || { date: '', teams: [], matches: [], cancelOnDay: [] },
-                        result.weeksData[5] || { date: '', teams: [], matches: [], cancelOnDay: [] }
+                        result.weeksData[4] || { date: '', teams: [], matches: [], cancelOnDay: [] }
                     ];
                     
+                    // Load leaderboard
                     await loadLeaderboard();
                 } else {
                     alert('Error loading data: ' + result.error);
@@ -1024,6 +956,7 @@
             }
         }
 
+        // Fungsi loading
         function showLoading() {
             if (!document.getElementById('loading')) {
                 const loading = document.createElement('div');
@@ -1054,6 +987,7 @@
             }
         }
 
+        // Fungsi untuk beralih tab
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
@@ -1081,6 +1015,7 @@
             }
         }
 
+        // Fungsi untuk merender daftar pemain
         function renderPlayers() {
             const playersList = document.getElementById('players-list');
             playersList.innerHTML = '';
@@ -1098,6 +1033,7 @@
             });
         }
 
+        // Fungsi untuk menambah pemain baru
         async function addPlayer() {
             const newPlayerInput = document.getElementById('new-player');
             const newPlayer = newPlayerInput.value.trim();
@@ -1116,7 +1052,7 @@
                     renderPlayers();
                     newPlayerInput.value = '';
                     
-                    for (let i = 1; i <= 5; i++) {
+                    for (let i = 1; i <= 4; i++) {
                         renderWeekData(i);
                     }
                     
@@ -1129,6 +1065,7 @@
             }
         }
 
+        // Fungsi untuk menghapus pemain
         async function removePlayer(playerName) {
             if (confirm(`Apakah Anda yakin ingin menghapus ${playerName}?`)) {
                 showLoading();
@@ -1142,7 +1079,7 @@
                     players = players.filter(p => p !== playerName);
                     renderPlayers();
                     
-                    for (let i = 1; i <= 5; i++) {
+                    for (let i = 1; i <= 4; i++) {
                         renderWeekData(i);
                     }
                     
@@ -1153,8 +1090,9 @@
             }
         }
 
+        // Fungsi untuk inisialisasi data mingguan
         function initializeWeeks() {
-            for (let i = 1; i <= 5; i++) {
+            for (let i = 1; i <= 4; i++) {
                 if (!weeksData[i-1].teams || weeksData[i-1].teams.length === 0) {
                     weeksData[i-1].teams = [];
                     for (let j = 0; j < 4; j++) {
@@ -1181,6 +1119,7 @@
                     }));
                 }
 
+                // Ensure cancelOnDay exists
                 if (!weeksData[i-1].cancelOnDay) {
                     weeksData[i-1].cancelOnDay = [];
                 }
@@ -1189,11 +1128,14 @@
             }
         }
 
+        // Fungsi untuk merender data mingguan
         function renderWeekData(weekNum) {
             const weekTeamsElement = document.getElementById(`week${weekNum}-teams`);
             const weekDateElement = document.getElementById(`week${weekNum}-date`);
             const weekScheduleElement = document.getElementById(`week${weekNum}-schedule`);
             const weekStandingsElement = document.getElementById(`week${weekNum}-standings`);
+
+            // Elemen baru untuk Cancel Players
             const weekCancelPlayersAvailableElement = document.getElementById(`available-cancel-players-${weekNum}`);
             const weekCancelPlayersListElement = document.getElementById(`canceled-players-${weekNum}`);
 
@@ -1201,6 +1143,7 @@
 
             weekTeamsElement.innerHTML = '';
 
+            // 🧩 Format tanggal ke bentuk DD-MMM-YYYY (contoh: 05-Oct-2025)
             if (weeksData[weekNum - 1].date) {
                 const d = new Date(weeksData[weekNum - 1].date);
                 if (!isNaN(d)) {
@@ -1214,6 +1157,8 @@
                 }
             }
 
+            
+            // Render match schedule
             weekScheduleElement.innerHTML = weeksData[weekNum-1].matches.map((match, index) => {
                 let displayScore1 = '';
                 if (match.score1 !== null && match.score1 !== undefined) {
@@ -1249,6 +1194,7 @@
                 `;
             }).join('');
 
+            // Render team standings
             const standings = calculateStandings(weeksData[weekNum - 1]);
             weekStandingsElement.innerHTML = `
                 <thead>
@@ -1279,6 +1225,7 @@
                 </tbody>
             `;
 
+            // Render Susun 4 Tim dengan desain baru
             weeksData[weekNum-1].teams.forEach((team, index) => {
                 const teamSection = document.createElement('div');
                 teamSection.className = `team-section team-${team.color}`;
@@ -1341,6 +1288,7 @@
                 weekTeamsElement.appendChild(teamSection);
             });
 
+            // Render Cancel Players
             const allPlayersInTeams = weeksData[weekNum-1].teams.flatMap(t => t.players);
             const allCancelPlayers = weeksData[weekNum-1].cancelOnDay || [];
             const availableCancelPlayers = players.filter(p => !allCancelPlayers.includes(p));
@@ -1360,6 +1308,7 @@
             `).join('') : '<p style="text-align: center; color: #999;">Belum ada pemain</p>';
         }
 
+        // Fungsi untuk filter pemain yang tersedia
         function filterPlayers(weekNum, teamColor, searchTerm) {
             const allPlayersInTeams = weeksData[weekNum-1].teams.flatMap(t => t.players);
             const team = weeksData[weekNum-1].teams.find(t => t.color === teamColor);
@@ -1385,6 +1334,7 @@
             `}).join('');
         }
 
+        // Fungsi untuk filter pemain cancel
         function filterCancelPlayers(weekNum, searchTerm) {
             const allPlayersInTeams = weeksData[weekNum-1].teams.flatMap(t => t.players);
             const allCancelPlayers = weeksData[weekNum-1].cancelOnDay || [];
@@ -1403,6 +1353,7 @@
             `).join('');
         }
 
+        // Fungsi untuk menambahkan pemain ke tim
         function addPlayerToTeam(weekNum, teamColor, playerName) {
             const team = weeksData[weekNum-1].teams.find(t => t.color === teamColor);
             if (team && !team.players.includes(playerName)) {
@@ -1413,6 +1364,7 @@
             }
         }
 
+        // Fungsi untuk menghapus pemain dari tim
         function removePlayerFromTeam(weekNum, teamColor, playerName) {
             const team = weeksData[weekNum-1].teams.find(t => t.color === teamColor);
             if (team) {
@@ -1426,6 +1378,7 @@
             }
         }
 
+        // Fungsi untuk menambahkan pemain cancel
         function addCancelPlayer(weekNum, playerName) {
             if (!weeksData[weekNum-1].cancelOnDay.includes(playerName)) {
                 weeksData[weekNum-1].cancelOnDay.push(playerName);
@@ -1434,12 +1387,14 @@
             }
         }
 
+        // Fungsi untuk menghapus pemain cancel
         function removeCancelPlayer(weekNum, playerName) {
             weeksData[weekNum-1].cancelOnDay = weeksData[weekNum-1].cancelOnDay.filter(p => p !== playerName);
             renderWeekData(weekNum);
             updateRanking();
         }
 
+        // Fungsi untuk memperbarui skor pertandingan
         function updateMatchScore(weekNum, matchIndex, scoreType, value) {
             if (value === '' || value === '-' || value === null || value === undefined) {
                 weeksData[weekNum-1].matches[matchIndex][scoreType] = null;
@@ -1457,6 +1412,7 @@
             updateRanking();
         }
 
+        // Fungsi untuk menjadikan pemain sebagai GK
         function setAsGK(weekNum, teamColor, playerName) {
             const team = weeksData[weekNum-1].teams.find(t => t.color === teamColor);
             if (team && team.players.includes(playerName)) {
@@ -1465,6 +1421,7 @@
             }
         }
 
+        // Fungsi untuk menghitung dan mengupdate hasil tim berdasarkan skor pertandingan
         function updateTeamResults(week) {
             week.teams.forEach(team => {
                 team.wins = 0;
@@ -1498,6 +1455,7 @@
             });
         }
 
+        // Fungsi untuk menghitung klasemen
         function calculateStandings(weekData) {
             const standings = weekData.teams.map(team => ({
                 color: team.color,
@@ -1520,6 +1478,7 @@
             return standings;
         }
 
+        // MODIFIKASI: Update fungsi saveWeekData untuk otomatis update leaderboard
         async function saveWeekData(weekNum) {
             weeksData[weekNum-1].date = document.getElementById(`week${weekNum}-date`).value;
             
@@ -1532,14 +1491,16 @@
             hideLoading();
 
             if (result.success) {
-                updateRanking();
+                updateRanking(); // Ini akan otomatis save leaderboard juga
                 alert(`Data minggu ${weekNum} berhasil disimpan!`);
             } else {
                 alert('Error saving data: ' + result.error);
             }
         }
 
+        // MODIFIKASI: Update fungsi updateRanking dengan debugging
         async function updateRanking() {
+            console.log('Starting updateRanking...');
             const rankingTable = document.getElementById('ranking-table');
             if (!rankingTable) {
                 console.error('Ranking table element not found');
@@ -1556,12 +1517,14 @@
                     week1: 0,
                     week2: 0,
                     week3: 0,
-                    week4: 0,
-                    week5: 0
+                    week4: 0
                 };
             });
 
-            for (let weekIndex = 0; weekIndex < 5; weekIndex++) {
+            console.log('Calculating points for', players.length, 'players');
+
+            // Hitung poin untuk setiap minggu
+            for (let weekIndex = 0; weekIndex < 4; weekIndex++) {
                 const weekData = weeksData[weekIndex];
                 const weekKey = `week${weekIndex + 1}`;
 
@@ -1576,10 +1539,14 @@
                             if (playerPoints[player]) {
                                 let weeklyPoints = 0;
                                 
+                                // Poin kehadiran
                                 weeklyPoints += 3;
+                                
+                                // Poin hasil pertandingan
                                 weeklyPoints += (team.wins * 3);
                                 weeklyPoints += (team.draws * 1);
                                 
+                                // Poin juara
                                 if (isChampion) {
                                     weeklyPoints += 2;
                                 }
@@ -1590,6 +1557,7 @@
                         });
                     });
 
+                    // Pengurangan untuk pemain cancel
                     if (weekData.cancelOnDay) {
                         weekData.cancelOnDay.forEach(player => {
                             if (playerPoints[player]) {
@@ -1601,6 +1569,7 @@
                 }
             }
 
+            // Konversi ke array untuk sorting
             const rankingArray = Object.keys(playerPoints).map(playerName => ({
                 name: playerName,
                 total: playerPoints[playerName].total,
@@ -1608,41 +1577,16 @@
                     playerPoints[playerName].week1,
                     playerPoints[playerName].week2,
                     playerPoints[playerName].week3,
-                    playerPoints[playerName].week4,
-                    playerPoints[playerName].week5
+                    playerPoints[playerName].week4
                 ]
             }));
 
-            rankingArray.sort((a, b) => {
-                if (b.total !== a.total) {
-                    return b.total - a.total;
-                }
-                
-                const totalWeek1to4_A = a.weeks[0] + a.weeks[1] + a.weeks[2] + a.weeks[3];
-                const totalWeek1to4_B = b.weeks[0] + b.weeks[1] + b.weeks[2] + b.weeks[3];
-                if (totalWeek1to4_B !== totalWeek1to4_A) {
-                    return totalWeek1to4_B - totalWeek1to4_A;
-                }
-                
-                const totalWeek1to3_A = a.weeks[0] + a.weeks[1] + a.weeks[2];
-                const totalWeek1to3_B = b.weeks[0] + b.weeks[1] + b.weeks[2];
-                if (totalWeek1to3_B !== totalWeek1to3_A) {
-                    return totalWeek1to3_B - totalWeek1to3_A;
-                }
-                
-                const totalWeek1to2_A = a.weeks[0] + a.weeks[1];
-                const totalWeek1to2_B = b.weeks[0] + b.weeks[1];
-                if (totalWeek1to2_B !== totalWeek1to2_A) {
-                    return totalWeek1to2_B - totalWeek1to2_A;
-                }
-                
-                if (b.weeks[0] !== a.weeks[0]) {
-                    return b.weeks[0] - a.weeks[0];
-                }
-                
-                return a.name.localeCompare(b.name);
-            });
+            // Urutkan berdasarkan total poin
+            rankingArray.sort((a, b) => b.total - a.total);
 
+            console.log('Ranking array:', rankingArray);
+
+            // Simpan ke leaderboard array
             leaderboard = rankingArray.map((player, index) => ({
                 rank: index + 1,
                 playerName: player.name,
@@ -1650,10 +1594,12 @@
                 week1: player.weeks[0] || 0,
                 week2: player.weeks[1] || 0,
                 week3: player.weeks[2] || 0,
-                week4: player.weeks[3] || 0,
-                week5: player.weeks[4] || 0
+                week4: player.weeks[3] || 0
             }));
 
+            console.log('Leaderboard data to save:', leaderboard);
+
+            // Render tabel
             rankingArray.forEach((player, index) => {
                 const row = document.createElement('tr');
 
@@ -1671,50 +1617,83 @@
                     <td>${player.weeks[1] || 0}</td>
                     <td>${player.weeks[2] || 0}</td>
                     <td>${player.weeks[3] || 0}</td>
-                    <td>${player.weeks[4] || 0}</td>
                 `;
 
                 tbody.appendChild(row);
             });
 
-            await saveLeaderboardToSheets();
+            // Simpan leaderboard ke Google Sheets
+            const saveResult = await saveLeaderboardToSheets();
+            console.log('Save leaderboard result:', saveResult);
         }
 
-        async function saveLeaderboardToSheets() {
-            try {
-                if (!leaderboard || leaderboard.length === 0) {
-                    return { success: false, error: 'No data' };
-                }
-
-                const result = await callGoogleAppsScript({
-                    action: 'updateLeaderboard',
-                    leaderboardData: JSON.stringify(leaderboard)
-                });
-                
-                return result;
-            } catch (error) {
-                console.error('Error saving leaderboard:', error);
-                return { success: false, error: error.message };
+    // MODIFIKASI: Fungsi saveLeaderboardToSheets dengan error handling yang lebih baik
+    async function saveLeaderboardToSheets() {
+        try {
+            console.log('Saving leaderboard to sheets...', leaderboard);
+            
+            if (!leaderboard || leaderboard.length === 0) {
+                console.warn('No leaderboard data to save');
+                return { success: false, error: 'No data' };
             }
-        }
 
-        async function loadLeaderboard() {
-            try {
-                const result = await callGoogleAppsScript({ action: 'getLeaderboard' });
-                
-                if (result.success) {
-                    leaderboard = result.leaderboard;
-                    return true;
-                } else {
-                    console.error('Error loading leaderboard:', result.error);
-                    return false;
-                }
-            } catch (error) {
-                console.error('Error loading leaderboard from sheets:', error);
+            const result = await callGoogleAppsScript({
+                action: 'updateLeaderboard',
+                leaderboardData: JSON.stringify(leaderboard)
+            });
+            
+            console.log('Save leaderboard API response:', result);
+            
+            if (result.success) {
+                console.log('✅ Leaderboard saved successfully to Google Sheets');
+                return { success: true };
+            } else {
+                console.error('❌ Error saving leaderboard:', result.error);
+                return { success: false, error: result.error };
+            }
+        } catch (error) {
+            console.error('❌ Exception saving leaderboard:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // FUNGSI BARU: Manual trigger untuk save leaderboard (untuk testing)
+    async function manualSaveLeaderboard() {
+        console.log('Manual save leaderboard triggered');
+        await updateRanking();
+        alert('Leaderboard manually saved! Check console for details.');
+    }
+
+    // FUNGSI BARU: Check current leaderboard data
+    async function checkLeaderboard() {
+        try {
+            const result = await callGoogleAppsScript({ action: 'debugLeaderboard' });
+            console.log('Current leaderboard in sheets:', result);
+            alert('Check console for current leaderboard data');
+        } catch (error) {
+            console.error('Error checking leaderboard:', error);
+        }
+    }
+
+    // FUNGSI BARU: Load leaderboard dari Google Sheets
+    async function loadLeaderboard() {
+        try {
+            const result = await callGoogleAppsScript({ action: 'getLeaderboard' });
+            
+            if (result.success) {
+                leaderboard = result.leaderboard;
+                return true;
+            } else {
+                console.error('Error loading leaderboard:', result.error);
                 return false;
             }
+        } catch (error) {
+            console.error('Error loading leaderboard from sheets:', error);
+            return false;
         }
+    }
 
+        // Fungsi untuk mengunduh gambar dari elemen HTML
         function downloadAsImage(elementId, filename) {
             const element = document.getElementById(elementId);
             html2canvas(element, { 
@@ -1730,6 +1709,7 @@
             });
         }
 
+        // Fungsi untuk mengunduh jadwal dan klasemen tim
         function downloadCombined(weekNum) {
             const element = document.getElementById(`week${weekNum}-combined`);
             const date = document.getElementById(`week${weekNum}-date`).value || `Minggu-${weekNum}`;
@@ -1746,6 +1726,7 @@
             });
         }
 
+        // Fungsi untuk mengunduh tabel klasemen
         function downloadRankingTable() {
             const element = document.getElementById('ranking-combined-container');
             html2canvas(element, { 
@@ -1761,6 +1742,7 @@
             });
         }
 
+        // FUNGSI BARU: Export susunan pemain tim yang FIXED
         function exportTeam(weekNum, teamColor) {
             const team = weeksData[weekNum-1].teams.find(t => t.color === teamColor);
             if (!team || team.players.length === 0) {
@@ -1847,6 +1829,8 @@
                     
                     document.body.removeChild(exportContainer);
                     
+                    console.log('Export berhasil:', link.download);
+                    
                 } catch (error) {
                     console.error('Error dalam export:', error);
                     alert('Terjadi error saat mengexport. Silakan coba lagi.');
@@ -1859,6 +1843,7 @@
             });
         }
 
+        // FUNGSI BARU: Export semua tim sekaligus yang FIXED
         function exportAllTeams(weekNum) {
             const teamsWithPlayers = teamColors.filter(color => {
                 const team = weeksData[weekNum-1].teams.find(t => t.color === color);
@@ -1886,11 +1871,12 @@
             });
         }
 
+        // MODIFIKASI: Update fungsi resetAllData untuk reset leaderboard juga
         async function resetAllData() {
             if (confirm("Apakah Anda yakin ingin mereset semua data poin, hasil mingguan, dan susunan pemain? Nama-nama pemain tidak akan dihapus.")) {
                 showLoading();
                 
-                for (let i = 1; i <= 5; i++) {
+                for (let i = 1; i <= 4; i++) {
                     weeksData[i-1] = {
                         date: '',
                         teams: [],
@@ -1930,12 +1916,13 @@
                     }
                 }
                 
+                // Reset leaderboard
                 leaderboard = [];
                 await saveLeaderboardToSheets();
                 
                 hideLoading();
                 
-                for (let i = 1; i <= 5; i++) {
+                for (let i = 1; i <= 4; i++) {
                     renderWeekData(i);
                 }
                 
@@ -1945,16 +1932,19 @@
             }
         }
 
+        // Fungsi untuk memperbarui periode
         function updatePeriod() {
             const month = document.getElementById('period-month').value;
             const year = document.getElementById('period-year').value;
         }
 
+        // Fungsi untuk memuat periode yang disimpan
         function loadPeriod() {
             const month = document.getElementById('period-month').value;
             const year = document.getElementById('period-year').value;
         }
 
+        // FUNGSI BARU: Export to Excel
         function exportToExcel() {
             const month = document.getElementById('period-month').value;
             const year = document.getElementById('period-year').value;
@@ -1964,7 +1954,7 @@
             data.push(['Klasemen Player Of The Month']);
             data.push([`Periode: ${month} ${year}`]);
             data.push([]);
-            data.push(['Peringkat', 'Nama Pemain', 'Total Poin', 'Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4', 'Minggu 5']);
+            data.push(['Peringkat', 'Nama Pemain', 'Total Poin', 'Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4']);
             
             const table = document.getElementById('ranking-table');
             const rows = table.querySelectorAll('tbody tr');
@@ -1992,7 +1982,6 @@
                 { wch: 10 },
                 { wch: 10 },
                 { wch: 10 },
-                { wch: 10 },
                 { wch: 10 }
             ];
             ws['!cols'] = colWidths;
@@ -2003,6 +1992,7 @@
             XLSX.writeFile(wb, `Klasemen_POTM_${month}_${year}.xlsx`);
         }
 
+        // Fungsi validasi input score
         function validateScoreInput(input) {
             if (input.value === '' || input.value === '-') {
                 input.value = '';
