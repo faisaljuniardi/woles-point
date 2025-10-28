@@ -526,6 +526,7 @@
     <div class="container">
         <header>
             <h1>Klasemen Poin Reward - Player Of The Month</h1>
+            <p class="description">Sistem penghitungan poin dengan tie-breaker berdasarkan performa mingguan</p>
         </header>
 
         <div class="tabs">
@@ -540,7 +541,7 @@
         <div id="dashboard" class="tab-content active">
             <div style="text-align: right; margin-bottom: 10px;">
                 <button onclick="downloadRankingTable()">Unduh Klasemen (JPG)</button>
-                <!-- <button class="btn-excel" onclick="exportToExcel()">Export to Excel</button> -->
+                <button class="btn-excel" onclick="exportToExcel()">Export to Excel</button>
             </div>
             <div id="ranking-combined-container" style="padding: 10px;">
                 <h2>Klasemen Player Of The Month - Oktober</h2>
@@ -566,6 +567,14 @@
                     <p>Reward:</p>
                     <p>- Winner: Jersey Custom</p>
                     <p>- Runner up: Gopay 25k</p>
+                </div>
+                <div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                    <h3>Sistem Tie-Breaker:</h3>
+                    <p>1. Total poin keseluruhan</p>
+                    <p>2. Akumulasi poin minggu 1-3</p>
+                    <p>3. Akumulasi poin minggu 1-2</p>
+                    <p>4. Poin minggu 1</p>
+                    <p>5. Urutan abjad</p>
                 </div>
             </div>
         </div>
@@ -873,11 +882,12 @@
 
     <script>
         // Konfigurasi - GANTI URL INI DENGAN URL WEB APP ANDA
-        const APPSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsjc9LXbHpC_YipfuT2FLx_-a_nQdlpVRprWGjtY15KuDdnFArLBBzL6Bad71kCs3L/exec';
+        const APPSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbywGTkiQEHPCWoxMpgP8LNppH2Mt625cAyeIh-HLJnenYZAdbwOHOlpin_kH63YcH0/exec';
 
         // Data awal
         let players = [];
         let weeksData = [{}, {}, {}, {}];
+        let leaderboard = [];
 
         const teamColors = ['merah', 'kuning', 'hijau', 'biru'];
         const teamNames = {
@@ -897,26 +907,11 @@
             { team1: 'hijau', team2: 'biru' }
         ];
 
-        // Fungsi untuk memanggil Google Apps Script
-        async function callGoogleAppsScript(params) {
-            try {
-                const queryString = new URLSearchParams(params).toString();
-                const response = await fetch(`${APPSCRIPT_URL}?${queryString}`);
-                const result = await response.json();
-                return result;
-            } catch (error) {
-                console.error('Error calling Google Apps Script:', error);
-                return { success: false, error: error.message };
-            }
-        }
-
-        // MODIFIKASI: Panggil addDebugButtons saat load
         document.addEventListener('DOMContentLoaded', async function() {
             await loadAllData();
             renderPlayers();
             initializeWeeks();
             updateRanking();
-            addDebugButtons(); // Tambahkan ini
 
             const today = new Date();
             const dateString = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth()+1).toString().padStart(2, '0')}/${today.getFullYear()}`;
@@ -928,7 +923,6 @@
             }
         });
 
-        // MODIFIKASI: Update fungsi loadAllData untuk include leaderboard
         async function loadAllData() {
             showLoading();
             
@@ -936,7 +930,7 @@
                 const result = await callGoogleAppsScript({ action: 'getAllData' });
                 
                 if (result.success) {
-                    players = result.players;
+                    players = result.players || [];
                     weeksData = [
                         result.weeksData[1] || { date: '', teams: [], matches: [], cancelOnDay: [] },
                         result.weeksData[2] || { date: '', teams: [], matches: [], cancelOnDay: [] },
@@ -1143,18 +1137,9 @@
 
             weekTeamsElement.innerHTML = '';
 
-            // 🧩 Format tanggal ke bentuk DD-MMM-YYYY (contoh: 05-Oct-2025)
+            // Format tanggal
             if (weeksData[weekNum - 1].date) {
-                const d = new Date(weeksData[weekNum - 1].date);
-                if (!isNaN(d)) {
-                    const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nop", "Des"];
-                    const day = d.getDate().toString().padStart(2, '0');
-                    const month = monthNames[d.getMonth()];
-                    const year = d.getFullYear();
-                    weekDateElement.value = `${day}-${month}-${year}`;
-                } else {
-                    weekDateElement.value = weeksData[weekNum - 1].date;
-                }
+                weekDateElement.value = weeksData[weekNum - 1].date;
             }
 
             
@@ -1478,27 +1463,7 @@
             return standings;
         }
 
-        // MODIFIKASI: Update fungsi saveWeekData untuk otomatis update leaderboard
-        async function saveWeekData(weekNum) {
-            weeksData[weekNum-1].date = document.getElementById(`week${weekNum}-date`).value;
-            
-            showLoading();
-            const result = await callGoogleAppsScript({
-                action: 'saveWeekData',
-                weekNum: weekNum,
-                weekData: JSON.stringify(weeksData[weekNum-1])
-            });
-            hideLoading();
-
-            if (result.success) {
-                updateRanking(); // Ini akan otomatis save leaderboard juga
-                alert(`Data minggu ${weekNum} berhasil disimpan!`);
-            } else {
-                alert('Error saving data: ' + result.error);
-            }
-        }
-
-        // MODIFIKASI: Update fungsi updateRanking dengan debugging
+        // MODIFIKASI: Update fungsi updateRanking dengan tie-breaker berdasarkan akumulasi
         async function updateRanking() {
             console.log('Starting updateRanking...');
             const rankingTable = document.getElementById('ranking-table');
@@ -1569,7 +1534,7 @@
                 }
             }
 
-            // Konversi ke array untuk sorting
+            // Konversi ke array untuk sorting dengan tie-breaker
             const rankingArray = Object.keys(playerPoints).map(playerName => ({
                 name: playerName,
                 total: playerPoints[playerName].total,
@@ -1581,10 +1546,37 @@
                 ]
             }));
 
-            // Urutkan berdasarkan total poin
-            rankingArray.sort((a, b) => b.total - a.total);
+            // Urutkan dengan tie-breaker berdasarkan akumulasi
+            rankingArray.sort((a, b) => {
+                // 1. Bandingkan total poin (descending)
+                if (b.total !== a.total) {
+                    return b.total - a.total;
+                }
+                
+                // 2. Jika total sama, bandingkan akumulasi minggu 1-3 (total tanpa minggu 4)
+                const totalWeek1to3_A = a.weeks[0] + a.weeks[1] + a.weeks[2];
+                const totalWeek1to3_B = b.weeks[0] + b.weeks[1] + b.weeks[2];
+                if (totalWeek1to3_B !== totalWeek1to3_A) {
+                    return totalWeek1to3_B - totalWeek1to3_A;
+                }
+                
+                // 3. Jika masih sama, bandingkan akumulasi minggu 1-2
+                const totalWeek1to2_A = a.weeks[0] + a.weeks[1];
+                const totalWeek1to2_B = b.weeks[0] + b.weeks[1];
+                if (totalWeek1to2_B !== totalWeek1to2_A) {
+                    return totalWeek1to2_B - totalWeek1to2_A;
+                }
+                
+                // 4. Jika masih sama, bandingkan poin minggu 1
+                if (b.weeks[0] !== a.weeks[0]) {
+                    return b.weeks[0] - a.weeks[0];
+                }
+                
+                // 5. Jika semua sama, bandingkan berdasarkan abjad (ascending)
+                return a.name.localeCompare(b.name);
+            });
 
-            console.log('Ranking array:', rankingArray);
+            console.log('Ranking array with tie-breakers:', rankingArray);
 
             // Simpan ke leaderboard array
             leaderboard = rankingArray.map((player, index) => ({
@@ -1627,71 +1619,66 @@
             console.log('Save leaderboard result:', saveResult);
         }
 
-    // MODIFIKASI: Fungsi saveLeaderboardToSheets dengan error handling yang lebih baik
-    async function saveLeaderboardToSheets() {
-        try {
-            console.log('Saving leaderboard to sheets...', leaderboard);
-            
-            if (!leaderboard || leaderboard.length === 0) {
-                console.warn('No leaderboard data to save');
-                return { success: false, error: 'No data' };
-            }
+        async function saveLeaderboardToSheets() {
+            try {
+                console.log('Saving leaderboard to sheets...', leaderboard);
+                
+                if (!leaderboard || leaderboard.length === 0) {
+                    console.warn('No leaderboard data to save');
+                    return { success: false, error: 'No data' };
+                }
 
+                const result = await callGoogleAppsScript({
+                    action: 'updateLeaderboard',
+                    leaderboardData: JSON.stringify(leaderboard)
+                });
+                
+                console.log('Save leaderboard API response:', result);
+                
+                if (result.success) {
+                    console.log('✅ Leaderboard saved successfully to Google Sheets');
+                    return { success: true };
+                } else {
+                    console.error('❌ Error saving leaderboard:', result.error);
+                    return { success: false, error: result.error };
+                }
+            } catch (error) {
+                console.error('❌ Exception saving leaderboard:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        async function saveWeekData(weekNum) {
+            weeksData[weekNum-1].date = document.getElementById(`week${weekNum}-date`).value;
+            
+            showLoading();
             const result = await callGoogleAppsScript({
-                action: 'updateLeaderboard',
-                leaderboardData: JSON.stringify(leaderboard)
+                action: 'saveWeekData',
+                weekNum: weekNum,
+                weekData: JSON.stringify(weeksData[weekNum-1])
             });
-            
-            console.log('Save leaderboard API response:', result);
-            
+            hideLoading();
+
             if (result.success) {
-                console.log('✅ Leaderboard saved successfully to Google Sheets');
-                return { success: true };
+                updateRanking();
+                alert(`Data minggu ${weekNum} berhasil disimpan!`);
             } else {
-                console.error('❌ Error saving leaderboard:', result.error);
-                return { success: false, error: result.error };
+                alert('Error saving data: ' + result.error);
             }
-        } catch (error) {
-            console.error('❌ Exception saving leaderboard:', error);
-            return { success: false, error: error.message };
         }
-    }
 
-    // FUNGSI BARU: Manual trigger untuk save leaderboard (untuk testing)
-    async function manualSaveLeaderboard() {
-        console.log('Manual save leaderboard triggered');
-        await updateRanking();
-        alert('Leaderboard manually saved! Check console for details.');
-    }
-
-    // FUNGSI BARU: Check current leaderboard data
-    async function checkLeaderboard() {
-        try {
-            const result = await callGoogleAppsScript({ action: 'debugLeaderboard' });
-            console.log('Current leaderboard in sheets:', result);
-            alert('Check console for current leaderboard data');
-        } catch (error) {
-            console.error('Error checking leaderboard:', error);
-        }
-    }
-
-    // FUNGSI BARU: Load leaderboard dari Google Sheets
-    async function loadLeaderboard() {
-        try {
-            const result = await callGoogleAppsScript({ action: 'getLeaderboard' });
-            
-            if (result.success) {
-                leaderboard = result.leaderboard;
-                return true;
-            } else {
-                console.error('Error loading leaderboard:', result.error);
-                return false;
+        // Fungsi untuk memanggil Google Apps Script
+        async function callGoogleAppsScript(params) {
+            try {
+                const queryString = new URLSearchParams(params).toString();
+                const response = await fetch(`${APPSCRIPT_URL}?${queryString}`);
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                console.error('Error calling Google Apps Script:', error);
+                return { success: false, error: error.message };
             }
-        } catch (error) {
-            console.error('Error loading leaderboard from sheets:', error);
-            return false;
         }
-    }
 
         // Fungsi untuk mengunduh gambar dari elemen HTML
         function downloadAsImage(elementId, filename) {
@@ -1932,27 +1919,12 @@
             }
         }
 
-        // Fungsi untuk memperbarui periode
-        function updatePeriod() {
-            const month = document.getElementById('period-month').value;
-            const year = document.getElementById('period-year').value;
-        }
-
-        // Fungsi untuk memuat periode yang disimpan
-        function loadPeriod() {
-            const month = document.getElementById('period-month').value;
-            const year = document.getElementById('period-year').value;
-        }
-
         // FUNGSI BARU: Export to Excel
         function exportToExcel() {
-            const month = document.getElementById('period-month').value;
-            const year = document.getElementById('period-year').value;
-            
             const data = [];
             
             data.push(['Klasemen Player Of The Month']);
-            data.push([`Periode: ${month} ${year}`]);
+            data.push(['Periode: Oktober 2025']);
             data.push([]);
             data.push(['Peringkat', 'Nama Pemain', 'Total Poin', 'Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4']);
             
@@ -1989,7 +1961,7 @@
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'Klasemen');
             
-            XLSX.writeFile(wb, `Klasemen_POTM_${month}_${year}.xlsx`);
+            XLSX.writeFile(wb, `Klasemen_POTM_Oktober_2025.xlsx`);
         }
 
         // Fungsi validasi input score
@@ -1999,6 +1971,24 @@
             } else if (!/^\d+$/.test(input.value)) {
                 input.value = '';
                 alert('Masukkan angka yang valid!');
+            }
+        }
+
+        // Fungsi untuk load leaderboard dari Google Sheets
+        async function loadLeaderboard() {
+            try {
+                const result = await callGoogleAppsScript({ action: 'getLeaderboard' });
+                
+                if (result.success) {
+                    leaderboard = result.leaderboard;
+                    return true;
+                } else {
+                    console.error('Error loading leaderboard:', result.error);
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error loading leaderboard from sheets:', error);
+                return false;
             }
         }
     </script>
