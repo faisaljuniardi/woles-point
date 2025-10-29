@@ -535,6 +535,7 @@
             <div class="tab" onclick="switchTab('week2')">Minggu 2</div>
             <div class="tab" onclick="switchTab('week3')">Minggu 3</div>
             <div class="tab" onclick="switchTab('week4')">Minggu 4</div>
+            <div class="tab" onclick="switchTab('week5')">Minggu 5</div>
         </div>
 
         <div id="dashboard" class="tab-content active">
@@ -555,10 +556,11 @@
                                 <th>Minggu 2</th>
                                 <th>Minggu 3</th>
                                 <th>Minggu 4</th>
+                                <th>Minggu 5</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Data akan diisi oleh Java -->
+                            <!-- Data akan diisi oleh JavaScript -->
                         </tbody>
                     </table>
                 </div>
@@ -860,6 +862,74 @@
                 <button class="save-btn" onclick="saveWeekData(4)">Simpan Data Minggu 4</button>
             </div>
         </div>
+
+        <div id="week5" class="tab-content">
+            <h2>Data Minggu 5</h2>
+            <div class="form-group">
+                <label for="week5-date">Tanggal:</label>
+                <input type="text" id="week5-date" placeholder="Tanggal">
+            </div>
+
+            <div style="text-align: right; margin-bottom: 10px;">
+                <button onclick="downloadCombined(5)">Unduh Jadwal & Klasemen Tim (JPG)</button>
+            </div>
+
+            <div id="week5-combined" class="schedule-and-standings">
+                <div>
+                    <h3>Jadwal Pertandingan</h3>
+                    <div id="week5-schedule"></div>
+                </div>
+                <div>
+                    <h3>Klasemen Tim</h3>
+                    <table id="week5-standings"></table>
+                </div>
+            </div>
+
+            <!-- Container untuk export tim -->
+            <div class="export-teams-container">
+                <h3>Export Susunan Pemain Tim</h3>
+                <p>Export susunan pemain untuk masing-masing tim dalam format JPG</p>
+                <div class="team-export-container">
+                    <button class="btn-export" onclick="exportAllTeams(5)">Export Semua Tim (4 Gambar)</button>
+                    <button class="btn-export" onclick="exportTeam(5, 'merah')">Export Tim Merah</button>
+                    <button class="btn-export" onclick="exportTeam(5, 'kuning')">Export Tim Kuning</button>
+                    <button class="btn-export" onclick="exportTeam(5, 'hijau')">Export Tim Hijau</button>
+                    <button class="btn-export" onclick="exportTeam(5, 'biru')">Export Tim Biru</button>
+                </div>
+            </div>
+
+            <h3>Susun 4 Tim</h3>
+            <div id="week5-teams">
+                <!-- Data akan diisi oleh JavaScript -->
+            </div>
+
+            <div class="cancel-penalty-container">
+                <h3>Pemain Cancel di Hari H</h3>
+                <p style="color: var(--merah); margin-bottom: 10px; font-weight: bold;">Pemain yang cancel di hari H akan dikurangi 5 poin.</p>
+
+                <div class="form-group">
+                    <label>Tambah Pemain:</label>
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" placeholder="Cari pemain..." onkeyup="filterCancelPlayers(5, this.value)">
+                    </div>
+                    <div class="available-players" id="available-cancel-players-5">
+                        <!-- Data akan diisi oleh JavaScript -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Daftar Pemain:</label>
+                    <div class="team-players-list" id="canceled-players-5">
+                        <!-- Data akan diisi oleh JavaScript -->
+                    </div>
+                </div>
+            </div>
+            <div class="save-button-container">
+                <button class="save-btn" onclick="saveWeekData(5)">Simpan Data Minggu 5</button>
+            </div>
+        </div>
+
         <footer class="site-footer">
             <div class="footer-content">
                 <p>&copy; 2025 Fjun21 </p>
@@ -873,11 +943,12 @@
 
     <script>
         // Konfigurasi - GANTI URL INI DENGAN URL WEB APP ANDA
-        const APPSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxAfZywdMXtxuGKXBWuHZi6nw3etot0H-WF7QR0GtReJd8HGjX5wjCRoN_PDDjoWyxu/exec';
+        const APPSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbywZrjQxandHZtN_GOxabweN_mre6onzjidY4_OZQUZGFGER8xrIIrhuUX2ckMFxmyJ/exec';
 
-        // Data awal
+        // Data awal - TAMBAH MINGGU 5
         let players = [];
-        let weeksData = [{}, {}, {}, {}];
+        let weeksData = [{}, {}, {}, {}, {}]; // Dari 4 menjadi 5 minggu
+        let leaderboard = [];
 
         const teamColors = ['merah', 'kuning', 'hijau', 'biru'];
         const teamNames = {
@@ -910,25 +981,7 @@
             }
         }
 
-        // MODIFIKASI: Panggil addDebugButtons saat load
-        document.addEventListener('DOMContentLoaded', async function() {
-            await loadAllData();
-            renderPlayers();
-            initializeWeeks();
-            updateRanking();
-            addDebugButtons(); // Tambahkan ini
-
-            const today = new Date();
-            const dateString = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth()+1).toString().padStart(2, '0')}/${today.getFullYear()}`;
-
-            for (let i = 0; i < 4; i++) {
-                if (!weeksData[i].date) {
-                    document.getElementById(`week${i+1}-date`).value = dateString;
-                }
-            }
-        });
-
-        // MODIFIKASI: Update fungsi loadAllData untuk include leaderboard
+        // MODIFIKASI: Update loadAllData untuk include minggu 5
         async function loadAllData() {
             showLoading();
             
@@ -941,7 +994,8 @@
                         result.weeksData[1] || { date: '', teams: [], matches: [], cancelOnDay: [] },
                         result.weeksData[2] || { date: '', teams: [], matches: [], cancelOnDay: [] },
                         result.weeksData[3] || { date: '', teams: [], matches: [], cancelOnDay: [] },
-                        result.weeksData[4] || { date: '', teams: [], matches: [], cancelOnDay: [] }
+                        result.weeksData[4] || { date: '', teams: [], matches: [], cancelOnDay: [] },
+                        result.weeksData[5] || { date: '', teams: [], matches: [], cancelOnDay: [] } // TAMBAHAN MINGGU 5
                     ];
                     
                     // Load leaderboard
@@ -1052,7 +1106,7 @@
                     renderPlayers();
                     newPlayerInput.value = '';
                     
-                    for (let i = 1; i <= 4; i++) {
+                    for (let i = 1; i <= 5; i++) {
                         renderWeekData(i);
                     }
                     
@@ -1079,7 +1133,7 @@
                     players = players.filter(p => p !== playerName);
                     renderPlayers();
                     
-                    for (let i = 1; i <= 4; i++) {
+                    for (let i = 1; i <= 5; i++) {
                         renderWeekData(i);
                     }
                     
@@ -1090,9 +1144,9 @@
             }
         }
 
-        // Fungsi untuk inisialisasi data mingguan
+        // MODIFIKASI: Update initializeWeeks untuk include minggu 5
         function initializeWeeks() {
-            for (let i = 1; i <= 4; i++) {
+            for (let i = 1; i <= 5; i++) { // Dari 4 menjadi 5
                 if (!weeksData[i-1].teams || weeksData[i-1].teams.length === 0) {
                     weeksData[i-1].teams = [];
                     for (let j = 0; j < 4; j++) {
@@ -1498,7 +1552,7 @@
             }
         }
 
-        // MODIFIKASI: Update fungsi updateRanking dengan debugging
+        // MODIFIKASI: Update fungsi updateRanking dengan debugging dan minggu 5
         async function updateRanking() {
             console.log('Starting updateRanking...');
             const rankingTable = document.getElementById('ranking-table');
@@ -1517,14 +1571,15 @@
                     week1: 0,
                     week2: 0,
                     week3: 0,
-                    week4: 0
+                    week4: 0,
+                    week5: 0 // TAMBAHAN MINGGU 5
                 };
             });
 
             console.log('Calculating points for', players.length, 'players');
 
             // Hitung poin untuk setiap minggu
-            for (let weekIndex = 0; weekIndex < 4; weekIndex++) {
+            for (let weekIndex = 0; weekIndex < 5; weekIndex++) { // Dari 4 menjadi 5
                 const weekData = weeksData[weekIndex];
                 const weekKey = `week${weekIndex + 1}`;
 
@@ -1577,12 +1632,41 @@
                     playerPoints[playerName].week1,
                     playerPoints[playerName].week2,
                     playerPoints[playerName].week3,
-                    playerPoints[playerName].week4
+                    playerPoints[playerName].week4,
+                    playerPoints[playerName].week5 // TAMBAHAN MINGGU 5
                 ]
             }));
 
             // Urutkan berdasarkan total poin
-            rankingArray.sort((a, b) => b.total - a.total);
+            // Urutkan dengan tie-breaker berdasarkan akumulasi
+            rankingArray.sort((a, b) => {
+                // 1. Bandingkan total poin (descending)
+                if (b.total !== a.total) {
+                    return b.total - a.total;
+                }
+                
+                // 2. Jika total sama, bandingkan akumulasi minggu 1-4 (total tanpa minggu 5)
+                const totalWeek1to4_A = a.weeks[0] + a.weeks[1] + a.weeks[2] + a.weeks[3];
+                const totalWeek1to4_B = b.weeks[0] + b.weeks[1] + b.weeks[2] + b.weeks[3];
+                if (totalWeek1to4_B !== totalWeek1to4_A) {
+                    return totalWeek1to4_B - totalWeek1to4_A;
+                }
+                
+                // 3. Jika masih sama, bandingkan akumulasi minggu 1-3
+                const totalWeek1to3_A = a.weeks[0] + a.weeks[1] + a.weeks[2];
+                const totalWeek1to3_B = b.weeks[0] + b.weeks[1] + b.weeks[2];
+                if (totalWeek1to3_B !== totalWeek1to3_A) {
+                    return totalWeek1to3_B - totalWeek1to3_A;
+                }
+                
+                // 4. Jika masih sama, bandingkan poin minggu 1
+                if (b.weeks[0] !== a.weeks[0]) {
+                    return b.weeks[0] - a.weeks[0];
+                }
+                
+                // 5. Jika semua sama, bandingkan berdasarkan abjad (ascending)
+                return a.name.localeCompare(b.name);
+            });
 
             console.log('Ranking array:', rankingArray);
 
@@ -1594,7 +1678,8 @@
                 week1: player.weeks[0] || 0,
                 week2: player.weeks[1] || 0,
                 week3: player.weeks[2] || 0,
-                week4: player.weeks[3] || 0
+                week4: player.weeks[3] || 0,
+                week5: player.weeks[4] || 0 // TAMBAHAN MINGGU 5
             }));
 
             console.log('Leaderboard data to save:', leaderboard);
@@ -1617,6 +1702,7 @@
                     <td>${player.weeks[1] || 0}</td>
                     <td>${player.weeks[2] || 0}</td>
                     <td>${player.weeks[3] || 0}</td>
+                    <td>${player.weeks[4] || 0}</td> <!-- TAMBAHAN MINGGU 5 -->
                 `;
 
                 tbody.appendChild(row);
@@ -1627,71 +1713,71 @@
             console.log('Save leaderboard result:', saveResult);
         }
 
-    // MODIFIKASI: Fungsi saveLeaderboardToSheets dengan error handling yang lebih baik
-    async function saveLeaderboardToSheets() {
-        try {
-            console.log('Saving leaderboard to sheets...', leaderboard);
-            
-            if (!leaderboard || leaderboard.length === 0) {
-                console.warn('No leaderboard data to save');
-                return { success: false, error: 'No data' };
+        // MODIFIKASI: Fungsi saveLeaderboardToSheets dengan error handling yang lebih baik
+        async function saveLeaderboardToSheets() {
+            try {
+                console.log('Saving leaderboard to sheets...', leaderboard);
+                
+                if (!leaderboard || leaderboard.length === 0) {
+                    console.warn('No leaderboard data to save');
+                    return { success: false, error: 'No data' };
+                }
+
+                const result = await callGoogleAppsScript({
+                    action: 'updateLeaderboard',
+                    leaderboardData: JSON.stringify(leaderboard)
+                });
+                
+                console.log('Save leaderboard API response:', result);
+                
+                if (result.success) {
+                    console.log('✅ Leaderboard saved successfully to Google Sheets');
+                    return { success: true };
+                } else {
+                    console.error('❌ Error saving leaderboard:', result.error);
+                    return { success: false, error: result.error };
+                }
+            } catch (error) {
+                console.error('❌ Exception saving leaderboard:', error);
+                return { success: false, error: error.message };
             }
+        }
 
-            const result = await callGoogleAppsScript({
-                action: 'updateLeaderboard',
-                leaderboardData: JSON.stringify(leaderboard)
-            });
-            
-            console.log('Save leaderboard API response:', result);
-            
-            if (result.success) {
-                console.log('✅ Leaderboard saved successfully to Google Sheets');
-                return { success: true };
-            } else {
-                console.error('❌ Error saving leaderboard:', result.error);
-                return { success: false, error: result.error };
+        // FUNGSI BARU: Manual trigger untuk save leaderboard (untuk testing)
+        async function manualSaveLeaderboard() {
+            console.log('Manual save leaderboard triggered');
+            await updateRanking();
+            alert('Leaderboard manually saved! Check console for details.');
+        }
+
+        // FUNGSI BARU: Check current leaderboard data
+        async function checkLeaderboard() {
+            try {
+                const result = await callGoogleAppsScript({ action: 'debugLeaderboard' });
+                console.log('Current leaderboard in sheets:', result);
+                alert('Check console for current leaderboard data');
+            } catch (error) {
+                console.error('Error checking leaderboard:', error);
             }
-        } catch (error) {
-            console.error('❌ Exception saving leaderboard:', error);
-            return { success: false, error: error.message };
         }
-    }
 
-    // FUNGSI BARU: Manual trigger untuk save leaderboard (untuk testing)
-    async function manualSaveLeaderboard() {
-        console.log('Manual save leaderboard triggered');
-        await updateRanking();
-        alert('Leaderboard manually saved! Check console for details.');
-    }
-
-    // FUNGSI BARU: Check current leaderboard data
-    async function checkLeaderboard() {
-        try {
-            const result = await callGoogleAppsScript({ action: 'debugLeaderboard' });
-            console.log('Current leaderboard in sheets:', result);
-            alert('Check console for current leaderboard data');
-        } catch (error) {
-            console.error('Error checking leaderboard:', error);
-        }
-    }
-
-    // FUNGSI BARU: Load leaderboard dari Google Sheets
-    async function loadLeaderboard() {
-        try {
-            const result = await callGoogleAppsScript({ action: 'getLeaderboard' });
-            
-            if (result.success) {
-                leaderboard = result.leaderboard;
-                return true;
-            } else {
-                console.error('Error loading leaderboard:', result.error);
+        // FUNGSI BARU: Load leaderboard dari Google Sheets
+        async function loadLeaderboard() {
+            try {
+                const result = await callGoogleAppsScript({ action: 'getLeaderboard' });
+                
+                if (result.success) {
+                    leaderboard = result.leaderboard;
+                    return true;
+                } else {
+                    console.error('Error loading leaderboard:', result.error);
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error loading leaderboard from sheets:', error);
                 return false;
             }
-        } catch (error) {
-            console.error('Error loading leaderboard from sheets:', error);
-            return false;
         }
-    }
 
         // Fungsi untuk mengunduh gambar dari elemen HTML
         function downloadAsImage(elementId, filename) {
@@ -1871,12 +1957,12 @@
             });
         }
 
-        // MODIFIKASI: Update fungsi resetAllData untuk reset leaderboard juga
+        // MODIFIKASI: Update fungsi resetAllData untuk reset leaderboard juga dan include minggu 5
         async function resetAllData() {
             if (confirm("Apakah Anda yakin ingin mereset semua data poin, hasil mingguan, dan susunan pemain? Nama-nama pemain tidak akan dihapus.")) {
                 showLoading();
                 
-                for (let i = 1; i <= 4; i++) {
+                for (let i = 1; i <= 5; i++) { // Dari 4 menjadi 5
                     weeksData[i-1] = {
                         date: '',
                         teams: [],
@@ -1922,7 +2008,7 @@
                 
                 hideLoading();
                 
-                for (let i = 1; i <= 4; i++) {
+                for (let i = 1; i <= 5; i++) { // Dari 4 menjadi 5
                     renderWeekData(i);
                 }
                 
@@ -1944,7 +2030,7 @@
             const year = document.getElementById('period-year').value;
         }
 
-        // FUNGSI BARU: Export to Excel
+        // MODIFIKASI: Update exportToExcel untuk include minggu 5
         function exportToExcel() {
             const month = document.getElementById('period-month').value;
             const year = document.getElementById('period-year').value;
@@ -1954,7 +2040,7 @@
             data.push(['Klasemen Player Of The Month']);
             data.push([`Periode: ${month} ${year}`]);
             data.push([]);
-            data.push(['Peringkat', 'Nama Pemain', 'Total Poin', 'Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4']);
+            data.push(['Peringkat', 'Nama Pemain', 'Total Poin', 'Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4', 'Minggu 5']); // TAMBAHAN MINGGU 5
             
             const table = document.getElementById('ranking-table');
             const rows = table.querySelectorAll('tbody tr');
@@ -1982,7 +2068,8 @@
                 { wch: 10 },
                 { wch: 10 },
                 { wch: 10 },
-                { wch: 10 }
+                { wch: 10 },
+                { wch: 10 } // TAMBAHAN MINGGU 5
             ];
             ws['!cols'] = colWidths;
             
@@ -2001,7 +2088,35 @@
                 alert('Masukkan angka yang valid!');
             }
         }
+
+        // MODIFIKASI: Update DOMContentLoaded untuk include minggu 5
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadAllData();
+            renderPlayers();
+            initializeWeeks();
+            updateRanking();
+            addDebugButtons();
+
+            const today = new Date();
+            const dateString = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth()+1).toString().padStart(2, '0')}/${today.getFullYear()}`;
+
+            for (let i = 0; i < 5; i++) { // Dari 4 menjadi 5
+                if (!weeksData[i].date) {
+                    document.getElementById(`week${i+1}-date`).value = dateString;
+                }
+            }
+        });
+
+        // FUNGSI BARU: Debug buttons
+        function addDebugButtons() {
+            const debugDiv = document.createElement('div');
+            debugDiv.style.cssText = 'position: fixed; bottom: 10px; right: 10px; z-index: 9999; background: rgba(0,0,0,0.7); padding: 10px; border-radius: 5px;';
+            debugDiv.innerHTML = `
+                <button onclick="manualSaveLeaderboard()" style="background: #e67e22; margin: 2px; padding: 5px; font-size: 12px;">Manual Save Leaderboard</button>
+                <button onclick="checkLeaderboard()" style="background: #9b59b6; margin: 2px; padding: 5px; font-size: 12px;">Check Leaderboard</button>
+            `;
+            document.body.appendChild(debugDiv);
+        }
     </script>
 </body>
 </html>
-
