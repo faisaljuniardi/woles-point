@@ -535,7 +535,6 @@
             <div class="tab" onclick="switchTab('week2')">Minggu 2</div>
             <div class="tab" onclick="switchTab('week3')">Minggu 3</div>
             <div class="tab" onclick="switchTab('week4')">Minggu 4</div>
-            <div class="tab" onclick="switchTab('week5')">Minggu 5</div>
         </div>
 
         <div id="dashboard" class="tab-content active">
@@ -556,7 +555,6 @@
                                 <th>Minggu 2</th>
                                 <th>Minggu 3</th>
                                 <th>Minggu 4</th>
-                                <th>Minggu 5</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -863,73 +861,6 @@
             </div>
         </div>
 
-        <div id="week5" class="tab-content">
-            <h2>Data Minggu 5</h2>
-            <div class="form-group">
-                <label for="week5-date">Tanggal:</label>
-                <input type="text" id="week5-date" placeholder="Tanggal">
-            </div>
-
-            <div style="text-align: right; margin-bottom: 10px;">
-                <button onclick="downloadCombined(5)">Unduh Jadwal & Klasemen Tim (JPG)</button>
-            </div>
-
-            <div id="week5-combined" class="schedule-and-standings">
-                <div>
-                    <h3>Jadwal Pertandingan</h3>
-                    <div id="week5-schedule"></div>
-                </div>
-                <div>
-                    <h3>Klasemen Tim</h3>
-                    <table id="week5-standings"></table>
-                </div>
-            </div>
-
-            <!-- Container untuk export tim -->
-            <div class="export-teams-container">
-                <h3>Export Susunan Pemain Tim</h3>
-                <p>Export susunan pemain untuk masing-masing tim dalam format JPG</p>
-                <div class="team-export-container">
-                    <button class="btn-export" onclick="exportAllTeams(5)">Export Semua Tim (4 Gambar)</button>
-                    <button class="btn-export" onclick="exportTeam(5, 'merah')">Export Tim Merah</button>
-                    <button class="btn-export" onclick="exportTeam(5, 'kuning')">Export Tim Kuning</button>
-                    <button class="btn-export" onclick="exportTeam(5, 'hijau')">Export Tim Hijau</button>
-                    <button class="btn-export" onclick="exportTeam(5, 'biru')">Export Tim Biru</button>
-                </div>
-            </div>
-
-            <h3>Susun 4 Tim</h3>
-            <div id="week5-teams">
-                <!-- Data akan diisi oleh JavaScript -->
-            </div>
-
-            <div class="cancel-penalty-container">
-                <h3>Pemain Cancel di Hari H</h3>
-                <p style="color: var(--merah); margin-bottom: 10px; font-weight: bold;">Pemain yang cancel di hari H akan dikurangi 5 poin.</p>
-
-                <div class="form-group">
-                    <label>Tambah Pemain:</label>
-                    <div class="search-box">
-                        <span class="search-icon">🔍</span>
-                        <input type="text" placeholder="Cari pemain..." onkeyup="filterCancelPlayers(5, this.value)">
-                    </div>
-                    <div class="available-players" id="available-cancel-players-5">
-                        <!-- Data akan diisi oleh JavaScript -->
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Daftar Pemain:</label>
-                    <div class="team-players-list" id="canceled-players-5">
-                        <!-- Data akan diisi oleh JavaScript -->
-                    </div>
-                </div>
-            </div>
-            <div class="save-button-container">
-                <button class="save-btn" onclick="saveWeekData(5)">Simpan Data Minggu 5</button>
-            </div>
-        </div>
-
         <footer class="site-footer">
             <div class="footer-content">
                 <p>&copy; 2025 Fjun21 </p>
@@ -945,9 +876,9 @@
         // Konfigurasi - GANTI URL INI DENGAN URL WEB APP ANDA
         const APPSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbywZrjQxandHZtN_GOxabweN_mre6onzjidY4_OZQUZGFGER8xrIIrhuUX2ckMFxmyJ/exec';
 
-        // Data awal - TAMBAH MINGGU 5
+        // Data awal - DIUBAH: Hanya 4 minggu
         let players = [];
-        let weeksData = [{}, {}, {}, {}, {}]; // Dari 4 menjadi 5 minggu
+        let weeksData = [{}, {}, {}, {}]; // Hanya 4 minggu
         let leaderboard = [];
 
         const teamColors = ['merah', 'kuning', 'hijau', 'biru'];
@@ -981,7 +912,7 @@
             }
         }
 
-        // MODIFIKASI: Update loadAllData untuk include minggu 5
+        // DIUBAH: Update loadAllData untuk hanya 4 minggu
         async function loadAllData() {
             showLoading();
             
@@ -994,8 +925,8 @@
                         result.weeksData[1] || { date: '', teams: [], matches: [], cancelOnDay: [] },
                         result.weeksData[2] || { date: '', teams: [], matches: [], cancelOnDay: [] },
                         result.weeksData[3] || { date: '', teams: [], matches: [], cancelOnDay: [] },
-                        result.weeksData[4] || { date: '', teams: [], matches: [], cancelOnDay: [] },
-                        result.weeksData[5] || { date: '', teams: [], matches: [], cancelOnDay: [] } // TAMBAHAN MINGGU 5
+                        result.weeksData[4] || { date: '', teams: [], matches: [], cancelOnDay: [] }
+                        // Hapus minggu 5
                     ];
                     
                     // Load leaderboard
@@ -1106,7 +1037,7 @@
                     renderPlayers();
                     newPlayerInput.value = '';
                     
-                    for (let i = 1; i <= 5; i++) {
+                    for (let i = 1; i <= 4; i++) { // Hanya 4 minggu
                         renderWeekData(i);
                     }
                     
@@ -1133,7 +1064,7 @@
                     players = players.filter(p => p !== playerName);
                     renderPlayers();
                     
-                    for (let i = 1; i <= 5; i++) {
+                    for (let i = 1; i <= 4; i++) { // Hanya 4 minggu
                         renderWeekData(i);
                     }
                     
@@ -1144,9 +1075,9 @@
             }
         }
 
-        // MODIFIKASI: Update initializeWeeks untuk include minggu 5
+        // DIUBAH: Update initializeWeeks untuk hanya 4 minggu
         function initializeWeeks() {
-            for (let i = 1; i <= 5; i++) { // Dari 4 menjadi 5
+            for (let i = 1; i <= 4; i++) { // Hanya 4 minggu
                 if (!weeksData[i-1].teams || weeksData[i-1].teams.length === 0) {
                     weeksData[i-1].teams = [];
                     for (let j = 0; j < 4; j++) {
@@ -1532,7 +1463,7 @@
             return standings;
         }
 
-        // MODIFIKASI: Update fungsi saveWeekData untuk otomatis update leaderboard
+        // DIUBAH: Update fungsi saveWeekData untuk hanya 4 minggu
         async function saveWeekData(weekNum) {
             weeksData[weekNum-1].date = document.getElementById(`week${weekNum}-date`).value;
             
@@ -1552,7 +1483,7 @@
             }
         }
 
-        // MODIFIKASI: Update fungsi updateRanking dengan debugging dan minggu 5
+        // DIUBAH: Update fungsi updateRanking untuk hanya 4 minggu
         async function updateRanking() {
             console.log('Starting updateRanking...');
             const rankingTable = document.getElementById('ranking-table');
@@ -1571,15 +1502,15 @@
                     week1: 0,
                     week2: 0,
                     week3: 0,
-                    week4: 0,
-                    week5: 0 // TAMBAHAN MINGGU 5
+                    week4: 0
+                    // Hapus week5
                 };
             });
 
             console.log('Calculating points for', players.length, 'players');
 
             // Hitung poin untuk setiap minggu
-            for (let weekIndex = 0; weekIndex < 5; weekIndex++) { // Dari 4 menjadi 5
+            for (let weekIndex = 0; weekIndex < 4; weekIndex++) { // Hanya 4 minggu
                 const weekData = weeksData[weekIndex];
                 const weekKey = `week${weekIndex + 1}`;
 
@@ -1632,8 +1563,8 @@
                     playerPoints[playerName].week1,
                     playerPoints[playerName].week2,
                     playerPoints[playerName].week3,
-                    playerPoints[playerName].week4,
-                    playerPoints[playerName].week5 // TAMBAHAN MINGGU 5
+                    playerPoints[playerName].week4
+                    // Hapus week5
                 ]
             }));
 
@@ -1645,26 +1576,19 @@
                     return b.total - a.total;
                 }
                 
-                // 2. Jika total sama, bandingkan akumulasi minggu 1-4 (total tanpa minggu 5)
-                const totalWeek1to4_A = a.weeks[0] + a.weeks[1] + a.weeks[2] + a.weeks[3];
-                const totalWeek1to4_B = b.weeks[0] + b.weeks[1] + b.weeks[2] + b.weeks[3];
-                if (totalWeek1to4_B !== totalWeek1to4_A) {
-                    return totalWeek1to4_B - totalWeek1to4_A;
-                }
-                
-                // 3. Jika masih sama, bandingkan akumulasi minggu 1-3
+                // 2. Jika total sama, bandingkan akumulasi minggu 1-3
                 const totalWeek1to3_A = a.weeks[0] + a.weeks[1] + a.weeks[2];
                 const totalWeek1to3_B = b.weeks[0] + b.weeks[1] + b.weeks[2];
                 if (totalWeek1to3_B !== totalWeek1to3_A) {
                     return totalWeek1to3_B - totalWeek1to3_A;
                 }
                 
-                // 4. Jika masih sama, bandingkan poin minggu 1
+                // 3. Jika masih sama, bandingkan poin minggu 1
                 if (b.weeks[0] !== a.weeks[0]) {
                     return b.weeks[0] - a.weeks[0];
                 }
                 
-                // 5. Jika semua sama, bandingkan berdasarkan abjad (ascending)
+                // 4. Jika semua sama, bandingkan berdasarkan abjad (ascending)
                 return a.name.localeCompare(b.name);
             });
 
@@ -1678,8 +1602,8 @@
                 week1: player.weeks[0] || 0,
                 week2: player.weeks[1] || 0,
                 week3: player.weeks[2] || 0,
-                week4: player.weeks[3] || 0,
-                week5: player.weeks[4] || 0 // TAMBAHAN MINGGU 5
+                week4: player.weeks[3] || 0
+                // Hapus week5
             }));
 
             console.log('Leaderboard data to save:', leaderboard);
@@ -1702,7 +1626,6 @@
                     <td>${player.weeks[1] || 0}</td>
                     <td>${player.weeks[2] || 0}</td>
                     <td>${player.weeks[3] || 0}</td>
-                    <td>${player.weeks[4] || 0}</td> <!-- TAMBAHAN MINGGU 5 -->
                 `;
 
                 tbody.appendChild(row);
@@ -1713,7 +1636,6 @@
             console.log('Save leaderboard result:', saveResult);
         }
 
-        // SOLUSI CEPAT: Ganti fungsi saveLeaderboardToSheets dengan ini
         async function saveLeaderboardToSheets() {
           try {
             console.log('🔄 Saving leaderboard...');
@@ -1959,12 +1881,12 @@
             });
         }
 
-        // MODIFIKASI: Update fungsi resetAllData untuk reset leaderboard juga dan include minggu 5
+        // DIUBAH: Update fungsi resetAllData untuk hanya 4 minggu
         async function resetAllData() {
             if (confirm("Apakah Anda yakin ingin mereset semua data poin, hasil mingguan, dan susunan pemain? Nama-nama pemain tidak akan dihapus.")) {
                 showLoading();
                 
-                for (let i = 1; i <= 5; i++) { // Dari 4 menjadi 5
+                for (let i = 1; i <= 4; i++) { // Hanya 4 minggu
                     weeksData[i-1] = {
                         date: '',
                         teams: [],
@@ -2010,7 +1932,7 @@
                 
                 hideLoading();
                 
-                for (let i = 1; i <= 5; i++) { // Dari 4 menjadi 5
+                for (let i = 1; i <= 4; i++) { // Hanya 4 minggu
                     renderWeekData(i);
                 }
                 
@@ -2032,7 +1954,7 @@
             const year = document.getElementById('period-year').value;
         }
 
-        // MODIFIKASI: Update exportToExcel untuk include minggu 5
+        // DIUBAH: Update exportToExcel untuk hanya 4 minggu
         function exportToExcel() {
             const month = document.getElementById('period-month').value;
             const year = document.getElementById('period-year').value;
@@ -2042,7 +1964,7 @@
             data.push(['Klasemen Player Of The Month']);
             data.push([`Periode: ${month} ${year}`]);
             data.push([]);
-            data.push(['Peringkat', 'Nama Pemain', 'Total Poin', 'Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4', 'Minggu 5']); // TAMBAHAN MINGGU 5
+            data.push(['Peringkat', 'Nama Pemain', 'Total Poin', 'Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4']); // Hanya 4 minggu
             
             const table = document.getElementById('ranking-table');
             const rows = table.querySelectorAll('tbody tr');
@@ -2070,8 +1992,7 @@
                 { wch: 10 },
                 { wch: 10 },
                 { wch: 10 },
-                { wch: 10 },
-                { wch: 10 } // TAMBAHAN MINGGU 5
+                { wch: 10 }
             ];
             ws['!cols'] = colWidths;
             
@@ -2091,7 +2012,7 @@
             }
         }
 
-        // MODIFIKASI: Update DOMContentLoaded untuk include minggu 5
+        // DIUBAH: Update DOMContentLoaded untuk hanya 4 minggu
         document.addEventListener('DOMContentLoaded', async function() {
             await loadAllData();
             renderPlayers();
@@ -2102,25 +2023,12 @@
             const today = new Date();
             const dateString = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth()+1).toString().padStart(2, '0')}/${today.getFullYear()}`;
 
-            for (let i = 0; i < 5; i++) { // Dari 4 menjadi 5
+            for (let i = 0; i < 4; i++) { // Hanya 4 minggu
                 if (!weeksData[i].date) {
                     document.getElementById(`week${i+1}-date`).value = dateString;
                 }
             }
         });
-
-        // FUNGSI BARU: Debug buttons
-        // function addDebugButtons() {
-        //     const debugDiv = document.createElement('div');
-        //     debugDiv.style.cssText = 'position: fixed; bottom: 10px; right: 10px; z-index: 9999; background: rgba(0,0,0,0.7); padding: 10px; border-radius: 5px;';
-        //     debugDiv.innerHTML = `
-        //         <button onclick="manualSaveLeaderboard()" style="background: #e67e22; margin: 2px; padding: 5px; font-size: 12px;">Manual Save Leaderboard</button>
-        //         <button onclick="checkLeaderboard()" style="background: #9b59b6; margin: 2px; padding: 5px; font-size: 12px;">Check Leaderboard</button>
-        //     `;
-        //     document.body.appendChild(debugDiv);
-        // }
     </script>
 </body>
 </html>
-
-
